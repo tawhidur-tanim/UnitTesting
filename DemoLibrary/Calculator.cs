@@ -25,15 +25,9 @@ namespace DemoLibrary
 
         public static double Divide(double x, double y)
         {
-            if (y != 0)
-            {
-                return x / y; 
-            }
-            else
-            {
-                // Custom business logic for divide by zero
-                return 0;
-            }
+            if (y == 0) return 0; // custom business logic
+
+            return x / y;
         }
     }
 }
