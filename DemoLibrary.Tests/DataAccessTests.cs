@@ -1,6 +1,7 @@
 ﻿using DemoLibrary.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -87,6 +88,61 @@ namespace DemoLibrary.Tests
 
     }
 
+    public class GetAllPeopleTests : IDisposable
+    {
+        private readonly string _tempFile;
+        private readonly List<PersonModel> _expectedPeople;
 
+        public GetAllPeopleTests()
+        {
+            // Create a temporary file and write some test data into it
+            _tempFile = Path.GetTempFileName();
+
+            _expectedPeople = new List<PersonModel>
+            {
+                new PersonModel { FirstName = "John", LastName = "Doe" },
+                new PersonModel { FirstName = "Jane", LastName = "Doe" }
+            };
+
+            var lines = new List<string>();
+            foreach (var person in _expectedPeople)
+            {
+                lines.Add($"{person.FirstName},{person.LastName}");
+            }
+            File.WriteAllLines(_tempFile, lines);
+        }
+
+        [Fact]
+        public void GetAllPeople_ReturnsCorrectPeople()
+        {
+            // Act
+            var actualPeople = DataAccess.GetAllPeople(_tempFile);
+
+            // Assert
+            Assert.Equal(_expectedPeople, actualPeople, new PersonModelComparer());
+        }
+
+        public void Dispose()
+        {
+            // Delete the temporary file
+            File.Delete(_tempFile);
+        }
+    }
+
+    public class PersonModelComparer : IEqualityComparer<PersonModel>
+    {
+        public bool Equals(PersonModel x, PersonModel y)
+        {
+            if (x == null || y == null)
+                return false;
+
+            return x.FirstName == y.FirstName && x.LastName == y.LastName;
+        }
+
+        public int GetHashCode(PersonModel obj)
+        {
+            return obj.FirstName.GetHashCode() ^ obj.LastName.GetHashCode();
+        }
+    }
 
 }

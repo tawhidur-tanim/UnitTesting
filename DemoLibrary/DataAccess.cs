@@ -17,7 +17,7 @@ namespace DemoLibrary
 
         public static void AddNewPerson(PersonModel person)
         {
-            List<PersonModel> people = GetAllPeople();
+            List<PersonModel> people = GetAllPeople(personTextFile);
 
             AddPersonToPeopleList(people, person);
 
@@ -53,10 +53,10 @@ namespace DemoLibrary
             return output;
         }
 
-        public static List<PersonModel> GetAllPeople()
+        public static List<PersonModel> GetAllPeople(string textFile)
         {
             List<PersonModel> output = new List<PersonModel>();
-            string[] content = File.ReadAllLines(personTextFile);
+            string[] content = File.ReadAllLines(textFile);
 
             foreach (string line in content)
             {
