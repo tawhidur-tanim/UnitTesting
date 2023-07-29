@@ -4,6 +4,7 @@ using Autofac.Extras.Moq;
 using DemoLibrary.Logic;
 using DemoLibrary.Models;
 using DemoLibrary.Utilities;
+using FluentAssertions;
 using Moq;
 using Xunit;
 
@@ -77,26 +78,22 @@ namespace MoqDemoTests.Logic
         [Fact]
         public void LoadPeople_LoadsSuccessfully()
         {      
-            using(var mock = AutoMock.GetLoose())
-            {
-                mock.Mock<ISqliteDataAccess>()
-                    .Setup(x => x.LoadData<PersonModel>("select * from Person"))
-                    .Returns(GetSamplePeople());
+            Mock<ISqliteDataAccess> _dataMock = new Mock<ISqliteDataAccess>();
 
-                var cls = mock.Create<PersonProcessor>();
-                var expected = GetSamplePeople();
+            // "select * from Person"
+            _dataMock.Setup(x => x.LoadData<PersonModel>(It.Is<string>(y => y == "select * from Person")))
+                .Returns(GetSamplePeople());
 
-                var actual = cls.LoadPeople();
+            var cls = new PersonProcessor(_dataMock.Object);
 
-                Assert.True(actual != null);
-                Assert.Equal(expected.Count, actual.Count);
+            var expected = GetSamplePeople();
 
-                for (int i = 0; i < expected.Count; i++)
-                {
-                    Assert.Equal(expected[i].FirstName, actual[i].FirstName);
-                    Assert.Equal(expected[i].LastName, actual[i].LastName);
-                }
-            }
+            var actual = cls.LoadPeople();
+
+            actual.Should().NotBeNull();
+            actual.Should().HaveSameCount(expected);
+            actual.Should().Equal(expected,(a, e) => a.FirstName == e.FirstName && a.LastName == e.LastName);  
+            
 
         }
 
