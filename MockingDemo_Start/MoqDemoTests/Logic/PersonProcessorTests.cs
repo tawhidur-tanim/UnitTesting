@@ -90,9 +90,9 @@ namespace MoqDemoTests.Logic
 
             var actual = cls.LoadPeople();
 
-            actual.Should().NotBeNull();
-            actual.Should().HaveSameCount(expected);
-            actual.Should().Equal(expected,(a, e) => a.FirstName == e.FirstName && a.LastName == e.LastName);  
+            actual.Should().NotBeNull()
+            .And.HaveSameCount(expected)
+            .And.Equal(expected, (a, e) => a.FirstName == e.FirstName && a.LastName == e.LastName);
             
 
         }
