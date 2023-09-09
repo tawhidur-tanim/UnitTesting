@@ -14,6 +14,10 @@ namespace DemoLibrary.Tests
         [Fact]
         public void ExampleLoadTextFile_ValidFileNameGiven()
         {
+            // Arrange
+            // prepare dummy file and all mocks
+
+
             // act
             string actual = Examples.ExampleLoadTextFile("This is valid filename.");
 
